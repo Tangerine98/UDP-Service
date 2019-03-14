@@ -1,4 +1,5 @@
 import socket
+import base64
 
 ip_addr = '127.0.0.1'
 udp_port = 8000
@@ -11,5 +12,6 @@ if __name__ == '__main__' :
     client.sendto(bytes(msg,'utf-8'), (ip_addr, udp_port))
 
     data, addr = client.recvfrom(max_bytes)
-    message = str(data.decode())
+    message = base64.b64decode(data)
+    #message = data.decode('ascii')
     print("Message: ",message)

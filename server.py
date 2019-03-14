@@ -1,6 +1,6 @@
 import socket
 import os
-#import base64
+import base64
 
 ip_addr = '127.0.0.1'
 udp_port = 8000
@@ -12,21 +12,21 @@ if __name__ == '__main__' :
     print('Server started at ',ip_addr,':',udp_port)
     while True:
         data, addr = server.recvfrom(max_bytes)
-        msg = str(data.decode())
-        print("File Name: ", msg)
+        file_name = str(data.decode())
+        print("File Name: ", file_name)
             
-        exists = os.path.isfile(msg)
+        exists = os.path.isfile(file_name)
         if exists:
-            file_size = os.path.getsize(msg)
+            file_size = os.path.getsize(file_name)
             if file_size < 10000000 :
-                if file_size > 1000000 :
-                    return_string = "File exists and it's size is {} MB".format(file_size/1000000)
-                else :
-                    return_string = "File exists and it's size is {} bytes".format(file_size)
+                file = open(file_name, 'rb')
+                file_content = file.read()
+                base64_format = base64.encodestring(file_content)
+                server.sendto(base64_format, addr)
             else :
                 return_string = "File can't be transferred since it has size greater than 10MB"
-            message = bytes(return_string,'utf-8')
-            server.sendto(message, addr)
+                message = bytes(return_string,'utf-8')
+                server.sendto(message, addr)
         else:
             message = bytes("File doesn't exist",'utf-8')
             server.sendto(message, addr)
