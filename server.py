@@ -18,10 +18,13 @@ if __name__ == '__main__' :
         exists = os.path.isfile(msg)
         if exists:
             file_size = os.path.getsize(msg)
-            if file_size > 1000000 :
-                return_string = "File exists and it's size is {} MB".format(file_size/1000000)
+            if file_size < 10000000 :
+                if file_size > 1000000 :
+                    return_string = "File exists and it's size is {} MB".format(file_size/1000000)
+                else :
+                    return_string = "File exists and it's size is {} bytes".format(file_size)
             else :
-                return_string = "File exists and it's size is {} bytes".format(file_size)
+                return_string = "File can't be transferred since it has size greater than 10MB"
             message = bytes(return_string,'utf-8')
             server.sendto(message, addr)
         else:
