@@ -4,7 +4,7 @@ import base64
 
 ip_addr = '127.0.0.1'
 udp_port = 8000
-max_bytes = 10000
+max_bytes = 10000000
 
 if __name__ == '__main__' :
     server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -13,7 +13,6 @@ if __name__ == '__main__' :
     while True:
         data, addr = server.recvfrom(max_bytes)
         file_name = str(data.decode())
-        print("File Name: ", file_name)
             
         exists = os.path.isfile(file_name)
         if exists:
@@ -30,8 +29,3 @@ if __name__ == '__main__' :
         else:
             message = bytes("File doesn't exist",'utf-8')
             server.sendto(message, addr)
-        
-        #with open("yourfile.ext", "rb") as image_file:
-            #encoded_string = base64.b64encode(image_file.read())
-
-            #print('File : ',encoded_string)
