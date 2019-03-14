@@ -3,7 +3,7 @@ import os
 #import base64
 
 ip_addr = '127.0.0.1'
-udp_port = 6789
+udp_port = 8000
 max_bytes = 10000
 
 if __name__ == '__main__' :
@@ -17,7 +17,12 @@ if __name__ == '__main__' :
             
         exists = os.path.isfile(msg)
         if exists:
-            message = bytes("File exists",'utf-8')
+            file_size = os.path.getsize(msg)
+            if file_size > 1000000 :
+                return_string = "File exists and it's size is {} MB".format(file_size/1000000)
+            else :
+                return_string = "File exists and it's size is {} bytes".format(file_size)
+            message = bytes(return_string,'utf-8')
             server.sendto(message, addr)
         else:
             message = bytes("File doesn't exist",'utf-8')

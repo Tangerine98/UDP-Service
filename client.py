@@ -1,7 +1,7 @@
 import socket
 
 ip_addr = '127.0.0.1'
-udp_port = 6789
+udp_port = 8000
 max_bytes = 10000
 
 if __name__ == '__main__' :
