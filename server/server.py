@@ -18,6 +18,16 @@ if __name__ == '__main__' :
         #print("\nConnected to client at port: {}".format(addr[1]))
         op = int(str(op.decode()))
 
+        if op == 1:
+            path = 'images/'
+ 
+            files = os.listdir(path)
+            file_list = "\nFILE LIST:-\n"
+            for name in files:
+                file_list = file_list + name + "\n"
+            print('Sending list of files..')
+            server.sendto(bytes(file_list,'utf-8'), addr)
+
         if op == 2:
             data, addr = server.recvfrom(max_bytes)
             file_name = str(data.decode())

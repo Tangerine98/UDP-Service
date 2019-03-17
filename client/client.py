@@ -20,7 +20,12 @@ if __name__ == '__main__' :
     while True:
         op = menu()
         client.sendto(bytes(str(op),'utf-8'), (ip_addr,udp_port))
-        if op == 2:
+
+        if op == 1:
+            data,addr = client.recvfrom(max_bytes)
+            print(str(data.decode()))
+
+        elif op == 2:
             msg = input("\nEnter file name: ")
             client.sendto(bytes(msg,'utf-8'), (ip_addr, udp_port))
 
