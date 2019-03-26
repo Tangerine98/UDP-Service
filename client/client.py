@@ -9,8 +9,9 @@ max_bytes = 10240
 def menu() :
     print("MENU:-")
     print("\t1. List all files")
-    print("\t2. Get a file")
-    print("\t3. Exit")
+    print("\t2. Create a folder")
+    print("\t3. Download a file")
+    print("\t4. Exit")
     op = int(input("Enter your choice: "))
     return op
 
@@ -25,7 +26,13 @@ if __name__ == '__main__' :
             data,addr = client.recvfrom(max_bytes)
             print(str(data.decode()))
 
-        elif op == 2:
+        if op == 2:
+            msg = input("\nEnter folder name: ")
+            client.sendto(bytes(msg,'utf-8'), (ip_addr,udp_port))
+            data, addr = client.recvfrom(max_bytes)
+            print(str(data.decode()))
+
+        elif op == 3:
             msg = input("\nEnter file name: ")
             client.sendto(bytes(msg,'utf-8'), (ip_addr, udp_port))
 
@@ -40,13 +47,10 @@ if __name__ == '__main__' :
                 message = str(data.decode())
                 print(message)
 
-        elif op == 3:
+        elif op == 4:
             client.sendto(bytes("Stop",'utf-8'), (ip_addr,udp_port))
             print('\nTerminating connection..')
             sys.exit()
 
         else:
             print('\nInvalid option\n')
-
-
-        

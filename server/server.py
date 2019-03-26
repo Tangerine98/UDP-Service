@@ -11,7 +11,7 @@ if __name__ == '__main__' :
     server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     server.bind((ip_addr, udp_port))
     print('Server started at ',ip_addr,':',udp_port)
-    print('Waiting for connection..')
+    #print('Waiting for connection..')
     while True:
 
         op, addr = server.recvfrom(max_bytes)
@@ -20,7 +20,7 @@ if __name__ == '__main__' :
 
         if op == 1:
             path = 'images/'
- 
+
             files = os.listdir(path)
             file_list = "\nFILE LIST:-\n"
             for name in files:
@@ -28,12 +28,24 @@ if __name__ == '__main__' :
             print('Sending list of files..')
             server.sendto(bytes(file_list,'utf-8'), addr)
 
-        if op == 2:
+        elif op == 2:
+            data, addr = server.recvfrom(max_bytes)
+            folder_name = str(data.decode())
+
+            try:
+                os.mkdir(folder_name)
+            except OSError:
+                message = "Creation of directory {} failed..".format(folder_name)
+            else:
+                message = "Successfully created directory {}..".format(folder_name)
+            server.sendto(bytes(message,'utf-8'), addr)
+
+        elif op == 3:
             data, addr = server.recvfrom(max_bytes)
             file_name = str(data.decode())
             print("\nRequested File : ",file_name)
             file_name = 'images/'+str(data.decode())
-            
+
             exists = os.path.isfile(file_name)
             if exists:
                 file_size = os.path.getsize(file_name)
@@ -50,6 +62,6 @@ if __name__ == '__main__' :
                 message = bytes("File doesn't exist",'utf-8')
                 server.sendto(message, addr)
 
-        elif op == 3:
+        elif op == 4:
             print('\nConnection terminated')
             sys.exit()
