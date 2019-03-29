@@ -2,6 +2,7 @@ import socket
 import os
 import sys
 import base64
+import shutil
 
 ip_addr = '127.0.0.1'
 udp_port = 8000
@@ -19,7 +20,15 @@ if __name__ == '__main__' :
         op = int(str(op.decode()))
 
         if op == 1:
-            path = 'images/'
+            path = os.path.split(os.getcwd())[1]
+            server.sendto(bytes(path,'utf-8'), addr)
+
+        elif op == 2:
+            path = os.path.split(os.getcwd())[1]
+            if path == 'server' :
+                path = 'file-server/'
+            else:
+                path = os.path.dirname(os.path.abspath(__file__)) + '/'
 
             files = os.listdir(path)
             file_list = "\nFILE LIST:-\n"
@@ -35,9 +44,15 @@ if __name__ == '__main__' :
             print('Sending list of files..')
             server.sendto(bytes(file_list,'utf-8'), addr)
 
-        elif op == 2:
+        elif op == 3:
+            path = os.path.split(os.getcwd())[1]
+            if path == 'server' :
+                path = 'file-server/'
+            else:
+                path = os.path.dirname(os.path.abspath(__file__)) + '/'
+
             data, addr = server.recvfrom(max_bytes)
-            folder_name = str(data.decode())
+            folder_name = path + str(data.decode())
 
             try:
                 os.mkdir(folder_name)
@@ -47,23 +62,60 @@ if __name__ == '__main__' :
                 message = "Successfully created directory {}..".format(folder_name)
             server.sendto(bytes(message,'utf-8'), addr)
 
-        elif op == 3:
+        elif op == 4:
+            path = os.path.split(os.getcwd())[1]
+            if path == 'server' :
+                path = 'file-server/'
+            else:
+                path = os.path.dirname(os.path.abspath(__file__)) + '/'
+
             data, addr = server.recvfrom(max_bytes)
-            folder_name = str(data.decode())
+            if str(data.decode()) == '..':
+                folder_name = str(data.decode())
+            else:
+                folder_name = path + str(data.decode())
 
             try:
                 os.chdir(folder_name)
             except OSError:
                 return_string = "Cannot move into directory {}.. Have you entered complete path??".format(folder_name)
             else:
-                return_string = "Successfully moved into folder {}".format(folder_name)
+                if folder_name == '..' :
+                    return_string = "Successfully moved into parent directory"
+                else:
+                    return_string = "Successfully moved into folder {}".format(os.path.split(os.getcwd())[1])
             server.sendto(bytes(return_string,'utf-8'), addr)
 
-        elif op == 6:
+        elif op == 5:
+            path = os.path.split(os.getcwd())[1]
+            if path == 'server' :
+                path = 'file-server/'
+            else:
+                path = os.path.dirname(os.path.abspath(__file__)) + '/'
+
+            data, addr = server.recvfrom(max_bytes)
+            folder_name = path + str(data.decode())
+            print("Directory to be deleted: ", folder_name)
+
+            try:
+                shutil.rmtree(folder_name)
+            except OSError:
+                return_string = "Deletion of the directory %s failed" % folder_name
+            else:
+                return_string = "Successfully deleted the directory %s" % folder_name
+            server.sendto(bytes(return_string,'utf-8'), addr)
+
+        elif op == 7:
+            path = os.path.split(os.getcwd())[1]
+            if path == 'server' :
+                path = 'file-server/'
+            else:
+                path = os.path.dirname(os.path.abspath(__file__)) + '/'
+
             data, addr = server.recvfrom(max_bytes)
             file_name = str(data.decode())
             print("\nRequested File : ",file_name)
-            file_name = 'images/'+str(data.decode())
+            file_name = path + str(data.decode())
 
             exists = os.path.isfile(file_name)
             if exists:
@@ -81,9 +133,15 @@ if __name__ == '__main__' :
                 message = bytes("File doesn't exist",'utf-8')
                 server.sendto(message, addr)
 
-        elif op == 7:
+        elif op == 8:
+            path = os.path.split(os.getcwd())[1]
+            if path == 'server' :
+                path = 'file-server/'
+            else:
+                path = os.path.dirname(os.path.abspath(__file__)) + '/'
+
             data, addr = server.recvfrom(max_bytes)
-            file_name = str(data.decode())
+            file_name = path + str(data.decode())
             print("\nFile to be deleted : ", file_name)
 
             try:
@@ -94,6 +152,6 @@ if __name__ == '__main__' :
                 return_string = "Successsfully deleted file {}".format(file_name)
             server.sendto(bytes(return_string,'utf-8'), addr)
 
-        elif op == 8:
+        elif op == 9:
             print('\nConnection terminated')
             sys.exit()
