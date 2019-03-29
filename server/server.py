@@ -47,6 +47,18 @@ if __name__ == '__main__' :
                 message = "Successfully created directory {}..".format(folder_name)
             server.sendto(bytes(message,'utf-8'), addr)
 
+        elif op == 3:
+            data, addr = server.recvfrom(max_bytes)
+            folder_name = str(data.decode())
+
+            try:
+                os.chdir(folder_name)
+            except OSError:
+                return_string = "Cannot move into directory {}.. Have you entered complete path??".format(folder_name)
+            else:
+                return_string = "Successfully moved into folder {}".format(folder_name)
+            server.sendto(bytes(return_string,'utf-8'), addr)
+
         elif op == 6:
             data, addr = server.recvfrom(max_bytes)
             file_name = str(data.decode())

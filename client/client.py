@@ -30,9 +30,15 @@ if __name__ == '__main__' :
             data,addr = client.recvfrom(max_bytes)
             print(str(data.decode()))
 
-        if op == 2:
+        elif op == 2:
             msg = input("\nEnter folder name: ")
             client.sendto(bytes(msg,'utf-8'), (ip_addr,udp_port))
+            data, addr = client.recvfrom(max_bytes)
+            print(str(data.decode()))
+
+        elif op == 3:
+            msg = input("\nEnter folder name : ")
+            client.sendto(bytes(msg,'utf-8'), (ip_addr, udp_port))
             data, addr = client.recvfrom(max_bytes)
             print(str(data.decode()))
 
