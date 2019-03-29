@@ -23,8 +23,15 @@ if __name__ == '__main__' :
 
             files = os.listdir(path)
             file_list = "\nFILE LIST:-\n"
+            folder_list = "\nDIRECTORY LIST:-\n"
             for name in files:
-                file_list = file_list + name + "\n"
+                file_exists = os.path.isfile(path+name)
+                folder_exists = os.path.isdir(path+name)
+                if file_exists:
+                    file_list = file_list + name + "\n"
+                elif folder_exists:
+                    folder_list = folder_list + name + "\n"
+            file_list = folder_list + file_list
             print('Sending list of files..')
             server.sendto(bytes(file_list,'utf-8'), addr)
 
@@ -40,7 +47,7 @@ if __name__ == '__main__' :
                 message = "Successfully created directory {}..".format(folder_name)
             server.sendto(bytes(message,'utf-8'), addr)
 
-        elif op == 3:
+        elif op == 6:
             data, addr = server.recvfrom(max_bytes)
             file_name = str(data.decode())
             print("\nRequested File : ",file_name)
@@ -62,6 +69,19 @@ if __name__ == '__main__' :
                 message = bytes("File doesn't exist",'utf-8')
                 server.sendto(message, addr)
 
-        elif op == 4:
+        elif op == 7:
+            data, addr = server.recvfrom(max_bytes)
+            file_name = str(data.decode())
+            print("\nFile to be deleted : ", file_name)
+
+            try:
+                os.remove(file_name)
+            except OSError:
+                return_string = "Deletion of file {} failed".format(file_name)
+            else:
+                return_string = "Successsfully deleted file {}".format(file_name)
+            server.sendto(bytes(return_string,'utf-8'), addr)
+
+        elif op == 8:
             print('\nConnection terminated')
             sys.exit()
