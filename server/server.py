@@ -75,7 +75,7 @@ if __name__ == '__main__' :
                 if folder_name == '..' :
                     return_string = "Successfully moved into parent directory"
                 else:
-                    return_string = "Successfully moved into folder {}".format(os.path.split(os.getcwd())[1])
+                    return_string = "Successfully moved into folder {}".format(subtract(path) + str(data.decode()))
             server.sendto(bytes(return_string,'utf-8'), addr)
 
         elif op == 5:
@@ -118,16 +118,10 @@ if __name__ == '__main__' :
 
             exists = os.path.isfile(file_name)
             if exists:
-                file_size = os.path.getsize(file_name)
-                if file_size < max_bytes :
-                    file = open(file_name, 'rb')
-                    file_content = file.read()
-                    base64_format = base64.encodestring(file_content)
-                    server.sendto(base64_format, addr)
-                else :
-                    return_string = "File can't be transferred since it has size greater than 10KB"
-                    message = bytes(return_string,'utf-8')
-                    server.sendto(message, addr)
+                file = open(file_name, 'rb')
+                file_content = file.read()
+                base64_format = base64.encodestring(file_content)
+                server.sendto(base64_format, addr)
             else:
                 message = bytes("File doesn't exist",'utf-8')
                 server.sendto(message, addr)
