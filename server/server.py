@@ -8,19 +8,19 @@ ip_addr = '127.0.0.1'
 udp_port = 8000
 max_bytes = 10240
 
+repo_path = os.path.dirname(os.path.abspath(__file__)) + '/'
+
 def subtract(path):
-    return "".join(path.rsplit("/home/tangerine/Projects/UDP-Service/server/"))
+    return "".join(path.rsplit(repo_path))
 
 if __name__ == '__main__' :
     server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     server.bind((ip_addr, udp_port))
     print('Server started at ',ip_addr,':',udp_port)
-    os.chdir('/home/tangerine/Projects/UDP-Service/server/file-server/')
-    #print('Waiting for connection..')
+    os.chdir(repo_path + 'file-server/')
     while True:
 
         op, addr = server.recvfrom(max_bytes)
-        #print("\nConnected to client at port: {}".format(addr[1]))
         op = int(str(op.decode()))
 
         if op == 1:
@@ -45,7 +45,6 @@ if __name__ == '__main__' :
             server.sendto(bytes(file_list,'utf-8'), addr)
 
         elif op == 3:
-            #path = os.path.split(os.getcwd())[1]
             path = os.path.dirname(os.path.abspath(__file__)) + '/'
 
             data, addr = server.recvfrom(max_bytes)
@@ -110,10 +109,6 @@ if __name__ == '__main__' :
             server.sendto(bytes(return_string,'utf-8'), addr)
 
         elif op == 7:
-            #path = os.path.split(os.getcwd())[1]
-            #if path == 'server' :
-            #    path = 'file-server/'
-            #else:
             path = os.path.dirname(os.path.abspath(__file__)) + '/'
 
             data, addr = server.recvfrom(max_bytes)
