@@ -1,9 +1,10 @@
 Your issue may already be reported!
 Please search on the [issue tracker](../) before creating one.
 ---
-name: Issues Template
-about: To add new features/report bugs and errors or update codebase
----
+
+| Name | About |
+| :---: | :---: |
+| Issues Template | To add new features/report bugs and errors or update codebase |
 
 <!-- Thanks for filing an issue! Before submitting, please fill in the following information. -->
 <!-- Make sure you close the issue once a PR is merged -->
