@@ -40,7 +40,12 @@ if __name__ == '__main__' :
                     file_list = file_list + name + "\n"
                 elif folder_exists:
                     folder_list = folder_list + name + "\n"
-            file_list = folder_list + file_list
+            if folder_list == "\nDIRECTORY LIST:-\n" and file_list == "\nFILE LIST:-\n":
+                file_list = "Directory is empty.."
+            elif file_list == "\nFILE LIST:-\n":
+                file_list = folder_list
+            elif folder_list != "\nDIRECTORY LIST:-\n" and file_list != "\nFILE LIST:_\n":
+                file_list = folder_list + file_list
             print('Sending list of files..')
             server.sendto(bytes(file_list,'utf-8'), addr)
 
