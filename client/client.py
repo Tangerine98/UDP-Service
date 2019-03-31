@@ -1,6 +1,7 @@
 import socket
 import sys
 import base64
+import os
 
 ip_addr = '127.0.0.1'
 udp_port = 8000
@@ -38,6 +39,22 @@ if __name__ == '__main__' :
         elif op == 3 or op == 4 or op ==5:
             msg = input("\nEnter folder name: ")
             client.sendto(bytes(msg,'utf-8'), (ip_addr,udp_port))
+            data, addr = client.recvfrom(max_bytes)
+            print(str(data.decode()))
+
+        elif op == 6:
+            file_name = input("\nEnter file name: ")
+            client.sendto(bytes(file_name,'utf-8'), (ip_addr, udp_port))
+
+            exists = os.path.isfile(file_name)
+            if exists:
+                file = open(file_name, 'rb')
+                file_content = file.read()
+                client.sendto(base64.encodestring(file_content), (ip_addr, udp_port))
+            else:
+                message = bytes("File doesn't exist",'utf-8')
+                client.sendto(message, (ip_addr, udp_port))
+
             data, addr = client.recvfrom(max_bytes)
             print(str(data.decode()))
 

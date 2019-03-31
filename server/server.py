@@ -8,10 +8,14 @@ ip_addr = '127.0.0.1'
 udp_port = 8000
 max_bytes = 10240
 
+def subtract(path):
+    return "".join(path.rsplit("/home/tangerine/Projects/UDP-Service/server/"))
+
 if __name__ == '__main__' :
     server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     server.bind((ip_addr, udp_port))
     print('Server started at ',ip_addr,':',udp_port)
+    os.chdir('/home/tangerine/Projects/UDP-Service/server/file-server/')
     #print('Waiting for connection..')
     while True:
 
@@ -24,11 +28,7 @@ if __name__ == '__main__' :
             server.sendto(bytes(path,'utf-8'), addr)
 
         elif op == 2:
-            path = os.path.split(os.getcwd())[1]
-            if path == 'server' :
-                path = 'file-server/'
-            else:
-                path = os.path.dirname(os.path.abspath(__file__)) + '/'
+            path = os.path.dirname(os.path.abspath(__file__)) + '/'
 
             files = os.listdir(path)
             file_list = "\nFILE LIST:-\n"
@@ -45,11 +45,8 @@ if __name__ == '__main__' :
             server.sendto(bytes(file_list,'utf-8'), addr)
 
         elif op == 3:
-            path = os.path.split(os.getcwd())[1]
-            if path == 'server' :
-                path = 'file-server/'
-            else:
-                path = os.path.dirname(os.path.abspath(__file__)) + '/'
+            #path = os.path.split(os.getcwd())[1]
+            path = os.path.dirname(os.path.abspath(__file__)) + '/'
 
             data, addr = server.recvfrom(max_bytes)
             folder_name = path + str(data.decode())
@@ -59,15 +56,11 @@ if __name__ == '__main__' :
             except OSError:
                 message = "Creation of directory {} failed..".format(folder_name)
             else:
-                message = "Successfully created directory {}..".format(folder_name)
+                message = "Successfully created directory {}..".format(subtract(path) + str(data.decode()))
             server.sendto(bytes(message,'utf-8'), addr)
 
         elif op == 4:
-            path = os.path.split(os.getcwd())[1]
-            if path == 'server' :
-                path = 'file-server/'
-            else:
-                path = os.path.dirname(os.path.abspath(__file__)) + '/'
+            path = os.path.dirname(os.path.abspath(__file__)) + '/'
 
             data, addr = server.recvfrom(max_bytes)
             if str(data.decode()) == '..':
@@ -87,30 +80,41 @@ if __name__ == '__main__' :
             server.sendto(bytes(return_string,'utf-8'), addr)
 
         elif op == 5:
-            path = os.path.split(os.getcwd())[1]
-            if path == 'server' :
-                path = 'file-server/'
-            else:
-                path = os.path.dirname(os.path.abspath(__file__)) + '/'
+            path = os.path.dirname(os.path.abspath(__file__)) + '/'
 
             data, addr = server.recvfrom(max_bytes)
             folder_name = path + str(data.decode())
-            print("Directory to be deleted: ", folder_name)
+            print("Directory to be deleted: ", (subtract(path) + str(data.decode())))
 
             try:
                 shutil.rmtree(folder_name)
             except OSError:
-                return_string = "Deletion of the directory %s failed" % folder_name
+                return_string = "Deletion of the directory %s failed" % (subtract(path) + str(data.decode()))
             else:
-                return_string = "Successfully deleted the directory %s" % folder_name
+                return_string = "Successfully deleted the directory %s" % (subtract(path) + str(data.decode()))
+            server.sendto(bytes(return_string,'utf-8'), addr)
+
+        elif op == 6:
+            path = os.path.dirname(os.path.abspath(__file__)) + '/'
+
+            file_name, addr = server.recvfrom(max_bytes)
+            file_name = str(file_name.decode())
+            data, addr = server.recvfrom(max_bytes)
+            try:
+                file_content = base64.b64decode(data)
+                file = open(file_name, 'wb')
+                file.write(file_content)
+                return_string = "File {} uploaded to folder {}".format(file_name, subtract(path))
+            except:
+                return_string = "File upload failed"
             server.sendto(bytes(return_string,'utf-8'), addr)
 
         elif op == 7:
-            path = os.path.split(os.getcwd())[1]
-            if path == 'server' :
-                path = 'file-server/'
-            else:
-                path = os.path.dirname(os.path.abspath(__file__)) + '/'
+            #path = os.path.split(os.getcwd())[1]
+            #if path == 'server' :
+            #    path = 'file-server/'
+            #else:
+            path = os.path.dirname(os.path.abspath(__file__)) + '/'
 
             data, addr = server.recvfrom(max_bytes)
             file_name = str(data.decode())
@@ -134,22 +138,18 @@ if __name__ == '__main__' :
                 server.sendto(message, addr)
 
         elif op == 8:
-            path = os.path.split(os.getcwd())[1]
-            if path == 'server' :
-                path = 'file-server/'
-            else:
-                path = os.path.dirname(os.path.abspath(__file__)) + '/'
+            path = os.path.dirname(os.path.abspath(__file__)) + '/'
 
             data, addr = server.recvfrom(max_bytes)
             file_name = path + str(data.decode())
-            print("\nFile to be deleted : ", file_name)
+            print("\nFile to be deleted : ", subtract(path) + str(data.decode()))
 
             try:
                 os.remove(file_name)
             except OSError:
-                return_string = "Deletion of file {} failed".format(file_name)
+                return_string = "Deletion of file {} failed".format(subtract(path) + str(data.decode()))
             else:
-                return_string = "Successsfully deleted file {}".format(file_name)
+                return_string = "Successfully deleted file {}".format(subtract(path) + str(data.decode()))
             server.sendto(bytes(return_string,'utf-8'), addr)
 
         elif op == 9:

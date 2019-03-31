@@ -1,2 +1,6 @@
 #Don't track contents of these folders
 .vscode
+
+#Don't upload the following files
+tempCodeRunnerFile.py
+server/file-server/hello.txt
