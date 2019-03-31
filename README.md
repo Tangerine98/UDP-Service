@@ -2,9 +2,8 @@
 File-Server is exactly what it sounds - a file server. Created using python(3.x), it currently does not contain a GUI, though I have plans to add it soon.
 
 ## Pre-Requisites
-This project uses Python 3.x and pip
+This project uses Python 3.x, pip and a few python libraries.
 
-Installing python and pip
 ### Debain based systems
 ```
 apt install python3 python3-pip
@@ -21,8 +20,20 @@ zypper install python3 python3-pip
 pip3 install shutil
 ```
 ## Usage
-* Important note : Please move into server folder before executing server.py
+Download or clone this repo to your system.
+
+To clone:-
+```
+git clone https://github.com/Tangerine98/UDP-Service.git
+```
+Move into this repo:-
+```
+cd UDP-Service
+```
+
 Two terminals are required - one to run client program and the other to run the server program
+
+* Important note : Please move into server folder before executing server.py
 
 ### To run server program
 ```
